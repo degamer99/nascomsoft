@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@ui/select';
 import { Textarea } from '@ui/textarea';
 import { Label } from '@ui/label';
-import { ImageWithFallback } from '../components/figma/ImageWithFallback.tsx';
+import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { 
   ShoppingCart, 
   Search, 
