@@ -1,26 +1,21 @@
-// src/components/AuthPage.tsx
+// src/app/page.tsx (formerly `Index`)
 "use client"
 
 import Image from "next/image"
 import { useState } from "react"
-import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-// import { Label } from "@/components/ui/label"
-// import { Mail, Lock } from "lucide-react"
 import { Mail } from "lucide-react"
 import { useUserStore } from "@/store/userStore"
 
-const Index = () => {
-  
+export default function Index() {
   // **Local state** for your two inputs
   const [form, setForm] = useState({ email: "", password: "" })
-
   // **Toggle** between "sign in" and "sign up"
   const [isNewUser, setIsNewUser] = useState(false)
 
   // **Pull** your auth actions & status from the Zustand store
-  const { signIn, signUp, loading, user, signInWithGoogle } = useUserStore()
+  const { signIn, signUp, loading, user } = useUserStore()
 
   // Update email/password fields
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -30,7 +25,6 @@ const Index = () => {
   // When the form submits…
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log("form: ", form)
     try {
       if (isNewUser) {
         await signUp(form.email, form.password)
@@ -45,21 +39,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-start pt-12 px-6 bg-white">
-      {/* Logo + Title */}
-      <div className="logo mt-auto flex flex-col items-center gap-4">
-        <Image
-          priority={false}
-          src="/nascomsoft_logo.jpeg"
-          alt="NascomSoft Logo"
-          width={300}
-          height={300}
-        />
-        <h1 className="text-3xl font-extrabold text-gray-600">Nascomsoft Embedded</h1>
-        <h2 className="text-teal-600 font-extrabold text-2xl mb-8">E-store</h2>
-      </div>
-
-      {/* Form Card */}
-
+      {/* …your logo/title… */}
 
       <form
         onSubmit={onSubmit}
@@ -96,19 +76,8 @@ const Index = () => {
             : "Sign In"}
         </Button>
 
-        {/* continue with google auth button */}
-        <Button variant="outline" type="button" className="w-full py-6 text-teal-700 font-bold" onClick={signInWithGoogle}>
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path
-              d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"
-              fill="currentColor"
-            />
-          </svg>
-          Continue with Google
-        </Button>
-
         {/* Toggle link */}
-        <p className="text-center text-sm text-gray-600 mb-1">
+        <p className="text-center text-sm text-gray-600">
           {isNewUser
             ? "Already have an account?"
             : "Don’t have an account yet?"}{" "}
@@ -120,17 +89,7 @@ const Index = () => {
             {isNewUser ? "Sign In" : "Sign Up"}
           </button>
         </p>
-
-        {/* Skip Auth  */}
-        <p className="text-center text-sm text-gray-600">
-          You just want to explore?{" "}
-          <a href="/home" className="text-teal-600 underline">
-            Skip
-          </a>
-        </p>
       </form>
     </div>
   )
 }
-
-export default Index;
