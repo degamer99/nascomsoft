@@ -1,7 +1,8 @@
 'use client'
 import Image from "next/image"
 import React, { useState, useEffect } from 'react';
-import { User } from 'lucide-react';
+import { User, ShoppingCart} from 'lucide-react';
+import Link from "next/link"
 
 // Mock data for the products to display
 const mockProducts = [
@@ -9,6 +10,103 @@ const mockProducts = [
   { id: 2, name: 'C02 - Cable', price: 'NGN 25', imageUrl: 'https://placehold.co/150x100/E0E0E0/white?text=Cable' },
   { id: 3, name: 'Raspberry Pi 4', price: 'NGN 35,000', imageUrl: 'https://placehold.co/150x100/E0E0E0/white?text=Raspberry' },
   { id: 4, name: 'ESP32 Dev Board', price: 'NGN 8,500', imageUrl: 'https://placehold.co/150x100/E0E0E0/white?text=ESP32' },
+];
+
+
+
+// Mock data for the products to display
+const mockProducts_Later = [
+  { name: "Accessories",
+    items: [ 
+      {id: 1,name: "20w hot glue stick",reviews: "(0)",price: "₦270.00",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+      {id: 2,name: "Male-male jumper wire (single)",reviews: "(0)",price: "₦100.00",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+      {id: 3,name: "Male-female jumper wire (single)",reviews: "(0)",price: "₦100.00",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+      {id: 4,name: "Male-female jumper wire (set)",reviews: "(0)",price: "₦1,500.00",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+      {id: 5,name: "Hot glue sticks-60w",reviews: "(0)",price: "₦400.00",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+      {id: 6,name: "Neodymium super magnet 8x5mm",reviews: "(0)",price: "₦350.00",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+      {id: 7,name: "Female-female jumper wire (single)",reviews: "(0)",price: "₦100.00",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+      {id: 8,name: "Female-female jumper wire (set)",reviews: "(0)",price: "₦1,400.00",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+      {id: 9,name: "Tact switch 12*12*6",reviews: "(0)",price: "₦100.00",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9}
+    ]
+  },
+  { name: "Modules",
+    items: [ 
+      {id: 1,name: "HC-SR04 UltraSonic Sensor",reviews: "(0)",price: "₦2,500.00",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+      {id: 2,name: "Blue LCD 1602",reviews: "(0)",price: "₦3,000.00",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+      {id: 3,name: "PIR motion sensor",reviews: "(0)",price: "₦2,000.00",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+      {id: 4,name: "Relay module 1 channel",reviews: "(0)",price: "₦1,400.00",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+      {id: 5,name: "LM2596 Buck DC-DC power module",reviews: "(0)",price: "₦2,000.00",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+      {id: 6,name: "sim800L GSM module",reviews: "(0)",price: "₦8,800.00",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+      {id: 7,name: "DHT11 Temperature and humidity sensor",reviews: "(0)",price: "₦1,700.00",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+      {id: 8,name: "L298N Dual H Bridge DC Stepper Motor Driver",reviews: "(0)",price: "₦5,500.00",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+      {id: 9,name: "HC-05 bluetooth Module",reviews: "(0)",price: "₦6,000.00",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+    ]
+  },
+  { name: "Board",
+    items: [ 
+      {id: 1,name: "Breadboard MB102",reviews: "(0)",price: "₦2,000.00",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+      {id: 2,name: "Arduino uno r3 with cable",reviews: "(0)",price: "₦14,000.00",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+      {id: 3,name: "Hub360 Arduino starter kit with SMD UNO",reviews: "Rated 4.00 out of 5",price: "(1)",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+      {id: 4,name: "TP4056 18650 1A lipo Battery Charger with Protection module",reviews: "(0)",price: "₦500.00",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+      {id: 5,name: "vero board small size stripped",reviews: "(0)",price: "₦500.00",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+      {id: 6,name: "400 hole mini breadboard",reviews: "(0)",price: "₦1,200.00",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+      {id: 7,name: "vero board big size stripped",reviews: "(0)",price: "₦1,000.00",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+      {id: 8,name: "vero board big size dotted",reviews: "(0)",price: "₦900.00",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+      {id: 9,name: "Arduino UNO R3 SMD with cable",reviews: "(0)",price: "₦8,000.00",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+    ]
+  },
+  { name: "Resistors",
+    items: [ 
+      {id: 1,name: "10KΩ 1/4W resistor",reviews: "(0)",price: "₦20.00",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+      {id: 2,name: "1KΩ 1/4W resistor",reviews: "(0)",price: "₦15.00",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+      {id: 3,name: "220Ω 1/4W resistor",reviews: "(0)",price: "₦15.00",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+      {id: 4,name: "100Ω 1/4W resistors",reviews: "(0)",price: "₦10.00",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+      {id: 5,name: "330Ω 1/4W resistor",reviews: "(0)",price: "₦10.00",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+      {id: 6,name: "4.7KΩ 1/4W resistor",reviews: "(0)",price: "₦10.00",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+      {id: 7,name: "100KΩ 1/4W resistor",reviews: "(0)",price: "₦10.00",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+      {id: 8,name: "Photoresistor LDR",reviews: "(0)",price: "₦100.00",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+      {id: 9,name: "470Ω 1/4W resistor",reviews: "(0)",price: "₦10.00",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+    ]
+  },
+  { name: "IC’s",
+    items: [ 
+      {id: 1,name: "L7805CV",reviews: "(0)",price: "₦300.00",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+      {id: 2,name: "IC socket 28 pins",reviews: "(0)",price: "₦100.00",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+      {id: 3,name: "NE555 Timer",reviews: "(0)",price: "₦150.00",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+      {id: 4,name: "Hub360 Arduino starter kit with SMD UNO",reviews: "Rated 4.00 out of 5",price: "(1)",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+      {id: 5,name: "L293 Motor driver IC",reviews: "(0)",price: "₦550.00",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+      {id: 6,name: "ic socket 16 pin",reviews: "(0)",price: "₦90.00",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+      {id: 7,name: "74HC595 Shift Register",reviews: "(0)",price: "₦250.00",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+      {id: 8,name: "Atmega 328P-PU with bootloader",reviews: "(0)",price: "₦6,500.00",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+      {id: 9,name: "Atmega 328P-PU",reviews: "(0)",price: "₦6,200.00",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+    ]
+  },
+  { name: "Sensors",
+    items: [ 
+      {id: 1,name: "RC522 13.56MHz RFID card",reviews: "(0)",price: "₦300.00",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+      {id: 2,name: "Photoresistor LDR",reviews: "(0)",price: "₦100.00",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+      {id: 3,name: "HC-SR04 UltraSonic Sensor",reviews: "(0)",price: "₦2,500.00",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+      {id: 4,name: "IR proximity sensor",reviews: "(0)",price: "₦850.00",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+      {id: 5,name: "125KHZ RFID Card",reviews: "(0)",price: "₦300.00",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+      {id: 6,name: "Hub360 Arduino starter kit with SMD UNO",reviews: "Rated 4.00 out of 5",price: "(1)",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+      {id: 7,name: "PIR motion sensor",reviews: "(0)",price: "₦2,000.00",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+      {id: 8,name: "Piezoelectric Transducer 27mm",reviews: "(0)",price: "₦200.00",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+      {id: 9,name: "IR LED transmitter",reviews: "(0)",price: "₦70.00",imageUrl: "https://placehold.co/150x100/E0E0E0/white?text=Product",quantity: 9},
+    ]
+  },
+  { name: "Others",
+    items: [ 
+      {id: 2,name: "PIR motion sensor",reviews: "(0)",price: "₦2,000.00",imageUrl: "",quantity: 9},
+      {id: 3,name: "Big LDR",reviews: "(0)",price: "₦800.00",imageUrl: "",quantity: 9},
+      {id: 4,name: "NTC-MF52AT 10k Thermistor",reviews: "(0)",price: "₦100.00",imageUrl: "",quantity: 9},
+      {id: 5,name: "Soil moisture sensor",reviews: "(0)",price: "₦1,800.00",imageUrl: "",quantity: 9},
+      {id: 6,name: "NRF24L01 RF Transceiver",reviews: "(0)",price: "₦1,700.00",imageUrl: "",quantity: 9},
+      {id: 7,name: "NTC 10D-9 thermistor",reviews: "(0)",price: "₦100.00",imageUrl: "",quantity: 9},
+      {id: 8,name: "HX711 Weighing sensor",reviews: "(0)",price: "₦1,500.00",imageUrl: "",quantity: 9},
+      {id: 9,name: "50kg load cell",reviews: "(0)",price: "₦1,300.00",imageUrl: "",quantity: 9},
+      {id: 10,name: "HYSRF05 5pin Ultrasonic sensor",reviews: "(0)",price: "₦4,300.00",imageUrl: "",quantity: 9},
+    ],
+  },
 ];
 
 const Home = () => {
@@ -59,15 +157,31 @@ const Home = () => {
             {/* </svg> */}
             <span className="font-bold text-lg text-gray-800">NascomSoft Embedded</span>
           </div>
+        <div className=" flex flex-row gap-4">
+          {/* Shopping Cart Icon */}
+          <Link href="/cart">
+            <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-gray-200 grid place-items-center">
+              {isLoading ? (
+                <div className="w-full h-full bg-gray-200 animate-pulse"></div>
+              ) : (
+                <ShoppingCart />
+              )}
+            </div>
+          </Link>
+
 
           {/* User Profile Image */}
-          <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-gray-200 grid place-items-center">
-            {isLoading ? (
-              <div className="w-full h-full bg-gray-200 animate-pulse"></div>
-            ) : (
-              <User />
-            )}
-          </div>
+          <Link href="/profile">
+            <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-gray-200 grid place-items-center">
+              {isLoading ? (
+                <div className="w-full h-full bg-gray-200 animate-pulse"></div>
+              ) : (
+                <User />
+              )}
+            </div>
+          </Link>
+        </div>
+
         </div>
 
         {/* User Greeting and Search Section */}

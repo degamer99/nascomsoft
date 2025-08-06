@@ -1,70 +1,100 @@
-// stores/useUserStore.ts
-import {create} from "zustand"
-import { auth, refreshUserToken, db, signInWithGooglePopup} from "@/store/firebase"
+// src/store/useUserStore.ts
+"use client"
+
+import { create } from "zustand"
 import {
+  initializeApp,
+  getApps,
+} from "firebase/app"
+import {
+  getAuth,
   onAuthStateChanged,
+  User,
+  UserCredential,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
   signOut as fbSignOut,
-  User
 } from "firebase/auth"
-import { setDoc, doc, serverTimestamp } from "firebase/firestore"
+import {
+  getFirestore,
+  setDoc,
+  doc,
+  serverTimestamp,
+} from "firebase/firestore"
 
+// ——— 1) Firebase initialization ———
+const firebaseConfig = {
+  apiKey:   process.env.NEXT_PUBLIC_FIREBASE_API_KEY!,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN!,
+  projectId:  process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID!,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET!,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID!,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID!,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID! 
+}
+
+const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig)
+const auth = getAuth(app)
+export const db = getFirestore(app)
+
+// ——— 2) Zustand store ———
 interface UserState {
   user: User | null
   admin: boolean
   loading: boolean
-  signUp: (email: string, pw: string) => Promise<void>
-  signIn: (email: string, pw: string) => Promise<void>
-  signInWithGoogle: () => Promise<void>
+
+  signUp: (email: string, pw: string) => Promise<UserCredential>
+  signIn: (email: string, pw: string) => Promise<UserCredential>
+  signInWithGoogle: () => Promise<UserCredential>
   signOut: () => Promise<void>
 }
 
-type UserState = {
-  user: User | null;
-  loading: boolean;
-};
-
 export const useUserStore = create<UserState>((set) => {
-  // 1️⃣ Listen once, globally, for auth state changes
-  onAuthStateChanged(auth, async (fbUser) => {
-    if (fbUser) {
-      // fetch custom claims to see if they’re an admin
-      const token = await refreshUserToken(fbUser)
-      set({ user: fbUser, admin: !!token.claims.admin, loading: false })
-      console.log(fbUser)
-    } else {
-      set({ user: null, admin: false, loading: false })
-      console.log(fbUser)
-    }
-  })
+  // a) Listen to auth changes (only in the browser)
+  if (typeof window !== "undefined") {
+    onAuthStateChanged(auth, async (fbUser) => {
+      if (fbUser) {
+        const token = await fbUser.getIdTokenResult(true)
+        set({
+          user: fbUser,
+          admin: !!token.claims.admin,
+          loading: false,
+        })
+      } else {
+        set({ user: null, admin: false, loading: false })
+      }
+    })
+  }
 
+  // b) Return initial state + actions
   return {
     user: null,
     admin: false,
     loading: true,
 
-    // 2️⃣ Sign Up — creates a Firebase Auth user and a Firestore profile
-    signUp: async (email, pw) => {
-      const cred = await createUserWithEmailAndPassword(auth, email, pw)
-      await setDoc(doc(db, "profiles", cred.user.uid), {
-        email,
-        createdAt: serverTimestamp(),
-      })
+    // 1️⃣ Email/password sign-up
+    signUp: (email, pw) =>
+      createUserWithEmailAndPassword(auth, email, pw).then(async (cred) => {
+        await setDoc(doc(db, "profiles", cred.user.uid), {
+          email,
+          createdAt: serverTimestamp(),
+        })
+        return cred
+      }),
+
+    // 2️⃣ Email/password sign-in
+    signIn: (email, pw) =>
+      signInWithEmailAndPassword(auth, email, pw),
+
+    // 3️⃣ Google popup sign-in
+    signInWithGoogle: () => {
+      const provider = new GoogleAuthProvider()
+      return signInWithPopup(auth, provider)
     },
 
-    // 3️⃣ Sign In
-    signIn: (email, pw) => signInWithEmailAndPassword(auth, email, pw),
-
-
-    // 3️⃣ Sign Inwith Google
-    signInWithGoogle: () => signInWithGooglePopup(),
-
-    // 4️⃣ Sign Out
-    signOut: () => fbsignOut(auth).then(() => {
-        console.log("User signed out successfully."); // Sign-out successful. Update your UI accordingly.
-      }).catch((error) => {
-        console.error("Sign-out Error:", error);
-      }),
+    // 4️⃣ Sign-out
+    signOut: () => fbSignOut(auth),
   }
 })

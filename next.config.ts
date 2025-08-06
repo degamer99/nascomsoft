@@ -6,6 +6,27 @@ const withPWA = require("next-pwa")({
   register: true,
   skipWaiting: true,
   disable: process.env.NODE_ENV === "development", // don’t enable in dev
+  runtimeCaching: [          // customize caching strategies
+    {
+      urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp)$/,
+      handler: "CacheFirst",
+      options: {
+        cacheName: "images-cache",
+        expiration: { maxEntries: 50, maxAgeSeconds: 60 * 60 * 24 * 30 },
+      },
+    },
+    {
+      urlPattern: /^https:\/\/fonts\.(?:googleapis|gstatic)\.com\/.*/i,
+      handler: "CacheFirst",
+      options: { cacheName: "google-fonts-cache" },
+    },
+    {
+      urlPattern: /^https:\/\/your-firestore-endpoint\/.*/i,
+      handler: "NetworkFirst",
+      options: { cacheName: "api-cache", networkTimeoutSeconds: 10 },
+    },
+    // …add other rules if needed…
+  ],
 })
 
 const nextConfig: NextConfig = {

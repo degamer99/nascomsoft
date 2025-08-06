@@ -15,6 +15,15 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Nascomsoft",
   description: "An E-Commerce site by Nascomsoft",
+  manifest: '/manifest.json', // Link to your manifest.json
+  themeColor: '#0d9488', // Your theme color
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'My PWA App',
+    // Add more properties for apple-touch-icon, etc. if needed
+    // You can also add link tags directly in the root layout for apple-touch-icon
+  },
 };
 
 export default function RootLayout({
@@ -27,6 +36,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+      <link rel="apple-touch-icon" href="/icon512_maskable.png" />
         {children}
       </body>
     </html>
