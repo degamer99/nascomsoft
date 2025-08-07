@@ -38,6 +38,7 @@ export default function AuthPage() {
     }
   }, []);
 
+
   // // redirect after login
   // useEffect(() => {
   //   if (!authLoading && user) {

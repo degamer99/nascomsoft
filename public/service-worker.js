@@ -1,34 +1,45 @@
-const CACHE_NAME = 'pages-cache-v1';
-// List the routes (HTML pages) you want to work offline:
+// public/service-worker.js
+
+const CACHE_NAME = 'site-cache-v2';
+
+// List the routes (HTML pages) you want to pre-cache:
 const PRECACHE_URLS = [
-  '/',           // root
-  '/home',       // /home page
-  '/products',   // /products page
-  '/profile',      // /about page
-  '/test',      // /about page
-  '/item',      // /about page
-  '/cart',      // /about page
-  // add any other pages you want to pre-cache
+  '/',
+  '/home',
+  '/products',
+  '/profile',
+  '/test',
+  '/item',
+  '/cart',
+  '/admin',
+  // Add any other pages here…
 ];
 
-
+// List any additional static assets (images, CSS, JS) you’d like to pre-cache:
+const ASSET_URLS = [
+  '/logo.png',
+  '/styles/main.css',
+  '/scripts/app.js',
+  '/images/banner.jpg',
+  // etc.
+];
 
 self.addEventListener('install', (event) => {
-  console.log('🛠️  SW installing and pre-caching routes.');
+  console.log('🛠️  SW installing – pre-caching routes & assets.');
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(PRECACHE_URLS))
-      .then(() => self.skipWaiting())
+    caches.open(CACHE_NAME).then((cache) =>
+      cache.addAll([...PRECACHE_URLS, ...ASSET_URLS])
+    ).then(() => self.skipWaiting())
   );
 });
 
 
 self.addEventListener('activate', (event) => {
-  console.log('⚡ SW activated, cleaning up old caches.');
+  console.log('⚡ SW activated – cleaning up old caches.');
   event.waitUntil(
-    caches.keys().then(keys =>
+    caches.keys().then((keys) =>
       Promise.all(
-        keys.map(key => {
+        keys.map((key) => {
           if (key !== CACHE_NAME) {
             console.log('🗑️  Deleting old cache:', key);
             return caches.delete(key);
@@ -39,28 +50,40 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-self.addEventListener('fetch', (event) => {
-  const req = event.request;
 
-  // 1) Navigation requests (HTML pages)
-  if (req.mode === 'navigate') {
+self.addEventListener('fetch', (event) => {
+  const { request } = event;
+
+  // --- 1) Navigation requests (HTML pages) ---
+  if (request.mode === 'navigate') {
     event.respondWith(
-      caches.match(req)                              // try the cache first
-        .then(cachedRes => cachedRes
-          || fetch(req).then(networkRes => {         // fallback to network
-            // also put in cache for next time
-            caches.open(CACHE_NAME)
-              .then(cache => cache.put(req, networkRes.clone()));
-            return networkRes;
-          })
-        ).catch(() => caches.match('/'))             // offline fallback to homepage
+      fetch(request)
+        .then((networkRes) => {
+          // update the cache for next time
+          caches.open(CACHE_NAME)
+            .then((cache) => cache.put(request, networkRes.clone()));
+          return networkRes;
+        })
+        .catch(() =>
+          // network failed, try cache
+          caches.match(request).then((cached) => cached || caches.match('/'))
+        )
     );
     return;
   }
 
-  // 2) Other requests (e.g. JS/CSS/images) – you can choose to cache these too
+  // --- 2) Other requests (assets: JS/CSS/images, etc) ---
   event.respondWith(
-    caches.match(req)
-      .then(cachedRes => cachedRes || fetch(req))
+    fetch(request)
+      .then((networkRes) => {
+        // optionally update cache
+        caches.open(CACHE_NAME)
+          .then((cache) => cache.put(request, networkRes.clone()));
+        return networkRes;
+      })
+      .catch(() =>
+        // if offline or fetch fails, serve from cache if available
+        caches.match(request)
+      )
   );
 });
