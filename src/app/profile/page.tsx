@@ -1,34 +1,43 @@
-"use client"
-// src/app/profile/page.tsx (or wherever your Profile page lives)
+"use client";
+// src/app/profile/page.tsx
 
-// import { Header } from "@/components/header"
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
-import { useUserStore } from "@/store/userStore"
-import { useRouter } from "next/navigation"
-import { ChevronLeft } from "lucide-react"
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { getAuth, User as FirebaseUser } from "firebase/auth";
 
-const Profile = () => {
-  const { signOut } = useUserStore()
-  const router = useRouter()
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { useUserStore } from "@/store/userStore";
+import { ChevronLeft } from "lucide-react";
+
+export default function Profile() {
+  const { signOut } = useUserStore();
+  const router = useRouter();
+  const auth = getAuth();
+
+  const [displayName, setDisplayName] = useState<string>("User");
+  const [email, setEmail] = useState<string>("");
+
+  useEffect(() => {
+    const user: FirebaseUser | null = auth.currentUser;
+    if (user) {
+      setDisplayName(user.displayName ?? "User");
+      setEmail(user.email ?? "");
+    }
+  }, [auth]);
 
   const goBack = () => {
-    router.back()
-  }
+    router.back();
+  };
 
   return (
     <>
-      {/* <Header /> */}
-
       <section className="max-w-lg mx-auto p-6 space-y-6">
-        <div className="header flex flex-row justify-between">
- <button
-        onClick={goBack}
-        className="pr-4 py-2 text-gray-800 rounded"
-      >
-          <ChevronLeft />
-      </button>
+        <div className="header flex justify-between items-center">
+          <button onClick={goBack} className="pr-4 py-2 text-gray-800 rounded">
+            <ChevronLeft />
+          </button>
           <h1 className="text-2xl font-semibold">Profile</h1>
         </div>
 
@@ -37,11 +46,11 @@ const Profile = () => {
           <CardContent className="flex items-center space-x-4">
             <Avatar>
               <AvatarImage src="/images/avatar.jpg" alt="User avatar" />
-              <AvatarFallback>MH</AvatarFallback>
+              <AvatarFallback>{displayName.charAt(0)}</AvatarFallback>
             </Avatar>
             <div>
-              <p className="text-lg font-medium">Moses Hirata</p>
-              <p className="text-sm text-muted-foreground">hirata@gmail.com</p>
+              <p className="text-lg font-medium">{displayName}</p>
+              {email && <p className="text-sm text-muted-foreground">{email}</p>}
             </div>
           </CardContent>
         </Card>
@@ -80,12 +89,15 @@ const Profile = () => {
           </CardHeader>
           <CardContent className="space-y-2">
             <button className="w-full text-left py-2 text-red-600 hover:bg-red-50 rounded">Report a Bug</button>
-            <button className="w-full text-left py-2 text-red-600 hover:bg-red-50 rounded" onClick={signOut}>Logout</button>
+            <button
+              className="w-full text-left py-2 text-red-600 hover:bg-red-50 rounded"
+              onClick={signOut}
+            >
+              Logout
+            </button>
           </CardContent>
         </Card>
       </section>
     </>
-  )
+  );
 }
-
-export default Profile
