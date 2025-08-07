@@ -39,12 +39,12 @@ export default function AuthPage() {
   }, []);
 
 
-  // // redirect after login
-  // useEffect(() => {
-  //   if (!authLoading && user) {
-  //     router.push("/home")
-  //   }
-  // }, [user, authLoading, router])
+  // redirect after login
+  useEffect(() => {
+    if (!authLoading && user) {
+      router.push("/home")
+    }
+  }, [user, authLoading, router])
 
   // simple field validation
   const validate = () => {
