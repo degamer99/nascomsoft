@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import ServiceWorkerRegistrar from '@/components/ServiceWorkerRegistrar';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,6 +38,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
       <link rel="apple-touch-icon" href="/icon512_maskable.png" />
+       <ServiceWorkerRegistrar />
         {children}
       </body>
     </html>

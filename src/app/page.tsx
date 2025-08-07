@@ -25,12 +25,25 @@ export default function AuthPage() {
   const [error, setError] = useState<string | null>(null)
   const [showPassword, setShowPassword] = useState(false)
 
-  // redirect after login
+
   useEffect(() => {
-    if (!authLoading && user) {
-      router.push("/home")
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.ready.then((reg) => {
+        console.log('✅ SW Ready:', reg);
+      }).catch((err) => {
+        console.error('❌ SW error:', err);
+      });
+    } else {
+      console.log('🚫 Service workers not supported');
     }
-  }, [user, authLoading, router])
+  }, []);
+
+  // // redirect after login
+  // useEffect(() => {
+  //   if (!authLoading && user) {
+  //     router.push("/home")
+  //   }
+  // }, [user, authLoading, router])
 
   // simple field validation
   const validate = () => {
