@@ -31,6 +31,10 @@ export default function Profile() {
     router.back();
   };
 
+  const handleSignOut = () => {
+    signOut().then(() => router.push("/"))
+  }
+
   return (
     <>
       <section className="max-w-lg mx-auto p-6 space-y-6">
@@ -91,7 +95,7 @@ export default function Profile() {
             <button className="w-full text-left py-2 text-red-600 hover:bg-red-50 rounded">Report a Bug</button>
             <button
               className="w-full text-left py-2 text-red-600 hover:bg-red-50 rounded"
-              onClick={signOut}
+              onClick={handleSignOut }
             >
               Logout
             </button>

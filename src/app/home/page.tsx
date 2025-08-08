@@ -6,7 +6,9 @@ import Link from "next/link"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {useCartStore, Product as ProductType} from "@/store/cartStore"
 import { Button } from "@/components/ui/button"
-// Mock data for the products to display
+import SearchProducts from "@/components/searchProducts"
+
+/// Mock data for the products to display
 const mockProducts = [
   { id: 1, name: 'Arduino Uno R3', price: 'NGN 11,000', imageUrl: 'https://placehold.co/150x100/E0E0E0/white?text=Arduino' },
   { id: 2, name: 'C02 - Cable', price: 'NGN 25', imageUrl: 'https://placehold.co/150x100/E0E0E0/white?text=Cable' },
@@ -260,23 +262,7 @@ const OthersItems = mockProducts_Later.find(c => c.name === "Others")?.items ?? 
         </div>
 
         {/* Search Bar */}
-        <div className="relative mb-6">
-          <input
-            type="text"
-            placeholder="Search component"
-            className="w-full pl-10 pr-4 py-4 bg-gray-100 rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500"
-          />
-          {/* Search Icon */}
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-        </div>
+     <SearchProducts />  
 
         {/* Hero Product Card */}
         <div className="relative bg-white rounded-2xl shadow-md p-4 mb-6 flex items-center justify-between overflow-hidden">
@@ -305,11 +291,11 @@ const OthersItems = mockProducts_Later.find(c => c.name === "Others")?.items ?? 
         </div>
 
         {/* Featured Products Section */}
-      <Tabs defaultValue="Accessories" className="">
-  <TabsList>
+<Tabs defaultValue="Accessories" className="">
+  <TabsList className="">
     <TabsTrigger value="Accessories">Accessories</TabsTrigger>
     <TabsTrigger value="Modules">Modules</TabsTrigger>
-    <TabsTrigger value="Board">Board</TabsTrigger>
+    {/* <TabsTrigger value="Board">Board</TabsTrigger> */}
     <TabsTrigger value="Resistors">Resistors</TabsTrigger>
     <TabsTrigger value="Others">Others</TabsTrigger>
   </TabsList>
