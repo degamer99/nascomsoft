@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import ServiceWorkerRegistrar from '@/components/ServiceWorkerRegistrar';
 import Script from 'next/script';
 
 const geistSans = Geist({
@@ -15,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Nascomsoft",
-  description: "An E-Commerce site by Nascomsoft",
+  title: "LangJson",
+  description: "A Language Helper that uses Json",
   manifest: '/manifest.json', // Link to your manifest.json
   themeColor: '#0d9488', // Your theme color
   appleWebApp: {
@@ -45,8 +44,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-      <link rel="apple-touch-icon" href="/icon512_maskable.png" />
-       <ServiceWorkerRegistrar />
+        <link rel="apple-touch-icon" href="/icon512_maskable.png" />
         {children}
       </body>
     </html>
